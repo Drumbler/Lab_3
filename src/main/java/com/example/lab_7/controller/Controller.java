@@ -20,8 +20,8 @@ public class Controller {
                 .operationUid(request.getOperationUid())
                 .systemTime(request.getSystemTime())
                 .code("success")
-                .errorCode("")
-                .errorMessage("")
+                .errorCode("0")
+                .errorMessage("None")
                 .build();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
