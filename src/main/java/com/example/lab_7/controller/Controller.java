@@ -3,18 +3,32 @@ package com.example.lab_7.controller;
 
 import com.example.lab_7.model.Request;
 import com.example.lab_7.model.Response;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import com.example.lab_7.service.ModifyService;
 
+@Slf4j
 @RestController
 public class Controller {
+    private final ModifyService modifyService;
+
+    @Autowired
+    public Controller(@Qualifier("ModifySystemTime") ModifyService ModifyService) {
+        this.modifyService = ModifyService;
+    }
+
 
     @PostMapping(value = "/feedback")
-    public ResponseEntity<Response> feedback(@RequestBody Request request){
+    public ResponseEntity<Response> feedback(@RequestBody Request request) {
+
+
+        log.warn("входящий реквест: " + String.valueOf(request));
         Response response = Response.builder()
                 .uid(request.getUid())
                 .operationUid(request.getOperationUid())
@@ -24,6 +38,10 @@ public class Controller {
                 .errorMessage("None")
                 .build();
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+
+        Response responseAfterModify = modifyService.modify(response);
+        log.warn("исходящий реквест: " + String.valueOf(response));
+
+        return new ResponseEntity<>(responseAfterModify, HttpStatus.OK);
     }
 }
